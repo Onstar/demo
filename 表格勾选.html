@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="../JQuery/jquery-3.2.1.js"></script>
+		<style type="text/css">
+			table{
+				width:700px;
+				margin: 150px auto;
+			}
+			table tr td{
+				width:25%;
+				text-align: center;
+			}
+			input[type=text]{
+				border: none;
+				height: 40px;
+				width: 100%;
+				line-height: 40px;
+				text-align: center;
+				font-size: 18px;
+			}
+			
+		</style>
+		<script>
+			$(function(){
+				// 复选框
+				var inpT = $("input[type='checkbox']").first();
+				var inpsB = $("[type='checkbox']:not(:first)");
+				var trsB = $("tr:not(:first)")
+				inpsB.on("click",function(){
+					trsB.css("background","transparent");
+					if(!this.checked){
+						$(this).parent().nextAll().children().css("background","transparent") .removeAttr("disabled");
+						$(this).parents("tr").css("background","#fff");
+					}else{
+						$(this).parent().nextAll().children().css("background","transparent") .attr("disabled","true");
+						$(this).parents("tr").css("background","#B0B0B0");
+					}
+					
+					var n=0;
+				
+					inpsB.map(function(){
+						if(this.checked==false){
+							n++;
+//							inpT.attr("checked",false);
+							inpT[0].checked=false;
+							console.log(2)
+						}
+					})
+					
+					if(n==0){
+							inpT[0].checked=true;
+						}	
+					
+				})
+				
+				inpT.on("click",function(){
+					if(this.checked){
+						inpsB.map(function(){
+							this.checked="true";
+							$(this).parents("tr").css("background","#fff");
+						})
+					}else{
+						inpsB.map(function(){
+							this.checked=false;
+							$(this).parents("tr").css("background","#fff");
+						})
+					}
+				})
+				
+				
+			})
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<table border="1" cellspacing="0">
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="姓名"/></td>
+				<td><input type="text" value="年龄"/></td>
+				<td><input type="text" value="专业"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="aaa"/></td>
+				<td><input type="text" value="16"/></td>
+				<td><input type="text" value="自动化"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="bbb"/></td>
+				<td><input type="text" value="26"/></td>
+				<td><input type="text" value="计算机"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="ccc"/></td>
+				<td><input type="text" value="33"/></td>
+				<td><input type="text" value="计算机"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="ddd"/></td>
+				<td><input type="text" value="22"/></td>
+				<td><input type="text" value="自动化"/></td>
+			</tr>
+			<tr>
+				<td><input type="checkbox"/></td>
+				<td><input type="text" value="eee"/></td>
+				<td><input type="text" value="22"/></td>
+				<td><input type="text" value="计算机"/></td>
+			</tr>
+		</table>
+	</body>
+</html>
