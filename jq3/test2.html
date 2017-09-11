@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				$(window).scroll(function(){
+					$('#s1').html($(this).scrollTop()+"px")
+				})
+				$(window).resize(function(){
+					$('#s2').html($(this).width()+"px,"+$(this).height()+"px")
+				})
+			})
+		</script>
+	</head>
+	<body style="height: 2000px;">
+		<span id="s1" style="position: fixed;left: 0;top: 0;font-size: 40px;">0px</span>
+		<span id="s2" style="position: fixed;right: 0;top: 0;font-size: 40px;">0px,0px</span>
+	</body>
+</html>

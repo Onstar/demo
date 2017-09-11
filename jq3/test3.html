@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			img{
+				display: block;
+			}
+			.box{
+				width: 350px;
+				height: 350px;
+				border: 1px solid #AAAAAA;
+				position: absolute;
+				left: 100px;
+				top: 100px;
+			}
+			.big{
+				width: 450px;
+				height: 450px;
+				overflow: hidden;
+				position: absolute;
+				left: 500px;
+				top: 100px;
+				border: 1px solid #AAAAAA;
+			}
+			.mask{
+				width: 200px;
+				height: 200px;
+				position: absolute;
+				left: 0;
+				top: 0;
+				background-color: rgba(255,0,0,0.4);
+				cursor: move;
+			}
+			.big>img{
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		</style>
+		<script src="js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				
+				var box = $('#box'),mask = $('#mask'),bp = $('#bigPic'),big = $('#big');
+//				console.log(box,mask,bp,big)
+				
+				box.mousemove(function(event){
+					
+					mask.offset({
+						//event.clientX是从浏览器左侧开始计算，而mask.offset().left同样是从浏览器左侧开始计算的，
+						//所以动态获得mask的位置只需要拿event的位置减去mask的位置的一半即可
+						'left' : event.clientX-mask.width()/2,
+						'top' : event.clientY-mask.height()/2
+					});
+					
+					//限制mask的活动范围
+					if (mask.position().left <= 0) {
+						mask.css('left',0)
+					}
+					if (mask.position().left >= box.width()-mask.width()) {
+						mask.css('left',box.width()-mask.width())
+					}
+					if (mask.position().top <= 0) {
+						mask.css('top',0)
+					}
+					if (mask.position().top >= box.height()-mask.height()) {
+						mask.css('top',box.height()-mask.height())
+					}
+					
+					
+					bx = -(bp.width()-big.width()) / (box.width()-mask.width())
+					
+					bp.css({
+						'left' : bx * mask.position().left,
+						'top' : bx * mask.position().top
+					})
+					
+				})
+				
+				
+			})
+		</script>
+	</head>
+	<body>
+		<div id="box" class="box">
+			<img src="img/001.jpg" />
+			<div id="mask" class="mask"></div>
+		</div>
+		<div id="big" class="big">
+			<img id="bigPic" src="img/0001.jpg"/>
+		</div>
+	</body>
+</html>

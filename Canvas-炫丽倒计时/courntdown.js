@@ -1,0 +1,177 @@
+var WINDOW_WIDTH = 1024;
+var WINDOW_HEIGHT = 768;
+var RADIUS = 8;
+var MARGIN_TOP=60;
+var MARGIN_LEFT=30;
+
+//const endTime = new Date(2017,8,11,18,30,30);
+var endTime = new Date();
+endTime.setTime(endTime.getTime()+3600*1000);//每次都倒计一个小时
+var curShowTimeSeconds = 0;
+
+var balls = [];
+const colors = ["#33b5e5","#0099cc","#aa66cc","#9933cc","#99cc00","#669900","#ffbb33","#ff8800","#ff4444","#cc0000"]
+
+window.onload = function(){
+	//屏幕自适应
+	//直接写document.body.clientWidth/clientHeight，得不到整个屏幕高度，需要在对应的html页面中的body元素中设置其高度为100%,把屏幕高度撑起来
+	WINDOW_WIDTH = document.body.clientWidth;
+	/*WINDOW_WIDTH = document.body.clientHeight;	//获取不到body高度？？？*/
+	WINDOW_HEIGHT = document.documentElement.clientHeight;
+	console.log(WINDOW_HEIGHT)
+	MARGIN_LEFT = Math.round(WINDOW_WIDTH/10);
+	RADIUS = Math.round(WINDOW_WIDTH*4/5/108)-1;
+	MARGIN_TOP = Math.round(WINDOW_HEIGHT/5);
+	
+	var canvas = document.getElementById("canvas")
+	var contex = canvas.getContext("2d");
+	canvas.width = WINDOW_WIDTH;
+	canvas.height = WINDOW_HEIGHT;
+	curShowTimeSeconds = getCurrentShowTimeSeconds();
+	
+	setInterval(function(){
+		render(contex);
+		update();
+	},50)
+}
+
+function update(){
+	var nextShowTimeSeconds = getCurrentShowTimeSeconds();
+	var nextHours = parseInt(nextShowTimeSeconds/3600);
+	var nextMinutes = parseInt(nextShowTimeSeconds-nextHours*3600)/60;
+	var nextSeconds = nextShowTimeSeconds%60;
+	
+	var curHours = parseInt(curShowTimeSeconds/3600);
+	var curMinutes = parseInt(curShowTimeSeconds-curHours*3600)/60;
+	var curSeconds = curShowTimeSeconds%60;
+	if(nextSeconds!=curSeconds){//秒数变化
+		if(parseInt(curHours/10)!=parseInt(nextHours/10)){
+			addBalls(MARGIN_LEFT+0,MARGIN_TOP,parseInt(curHours/10))
+		}
+		if(parseInt(curHours%10)!=parseInt(nextHours%10)){
+			addBalls(MARGIN_LEFT+15*(RADIUS+1),MARGIN_TOP,parseInt(curHours%10))
+		}
+		
+		if(parseInt(curMinutes/10)!=parseInt(nextMinutes/10)){
+			addBalls(MARGIN_LEFT+39*(RADIUS+1),MARGIN_TOP,parseInt(curMinutes/10))
+		}
+		if(parseInt(curMinutes%10)!=parseInt(nextMinutes%10)){
+			addBalls(MARGIN_LEFT+54*(RADIUS+1),MARGIN_TOP,parseInt(curMinutes%10))
+		}
+		
+		if(parseInt(curSeconds/10)!=parseInt(nextSeconds/10)){
+			addBalls(MARGIN_LEFT+78*(RADIUS+1),MARGIN_TOP,parseInt(curSeconds/10))
+		}
+		if(parseInt(curSeconds%10)!=parseInt(nextSeconds%10)){
+			addBalls(MARGIN_LEFT+93*(RADIUS+1),MARGIN_TOP,parseInt(curSeconds%10))
+		}
+		
+		curShowTimeSeconds = nextShowTimeSeconds;
+	}
+	
+	updateBalls();
+	console.log(balls.length)
+}
+
+function updateBalls(){
+	for(var i=0;i<balls.length;i++){
+		balls[i].x+=balls[i].vx;
+		balls[i].y+=balls[i].vy;
+		balls[i].vy+=balls[i].g;
+		
+		if(balls[i].y>=WINDOW_HEIGHT-RADIUS){//碰撞检测，当小球到达最底部时，让其反弹。
+			balls[i].y=WINDOW_HEIGHT-RADIUS;
+			balls[i].vy=-balls[i].vy*0.75;	//乘0.75，是为了模拟阻力，即，让小球反弹的高度逐渐降低
+		}
+	}
+	var cnt = 0;	//小球数量
+	for(var i=0;i<balls.length;i++){//在画布中的小球
+		if(balls[i].x+RADIUS>0&&balls[i].x-RADIUS<WINDOW_WIDTH)
+		balls[cnt++]=balls[i];	//把在画布中的小球位置移到前面去。
+	}
+	
+	/*while(balls.length>cnt){
+		balls.pop();	//	删除小球
+	}*/
+	while(balls.length>Math.min(300,cnt)){//取300或cnt，谁小取谁，限制出现在画布中的小球个数。
+		balls.pop();
+	}
+}
+
+//添加彩球到数组里
+function addBalls(x,y,num){
+	for(var i = 0;i<digit[num].length;i++){
+		for(var j =0;j<digit[num][j].length;j++){
+			if(digit[num][i][j] == 1){
+				var aBall = {
+					x:x+j*2*(RADIUS+1)+(RADIUS+1),
+					y:y+i*2*(RADIUS+1)+(RADIUS+1),
+					g:1.5+Math.random(),
+					vx:Math.pow(-1,Math.ceil(Math.random()*1000))*4,
+					vy:-5,
+					color:colors[Math.floor(Math.random()*colors.length)]
+				}
+				
+				balls.push(aBall);
+			}
+		}
+	}
+}
+
+function render(cxt){
+	
+	cxt.clearRect(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
+	
+	var hours = parseInt(curShowTimeSeconds/3600);
+	var minutes = parseInt(curShowTimeSeconds-hours*3600)/60;
+	var seconds = curShowTimeSeconds%60;
+	renderDigit(MARGIN_LEFT,MARGIN_TOP,parseInt(hours/10),cxt);
+	renderDigit(MARGIN_LEFT+15*(RADIUS+1),MARGIN_TOP,parseInt(hours%10),cxt);
+	renderDigit(MARGIN_LEFT+30*(RADIUS+1),MARGIN_TOP,10,cxt);
+	renderDigit(MARGIN_LEFT+39*(RADIUS+1),MARGIN_TOP,parseInt(minutes/10),cxt);
+	renderDigit(MARGIN_LEFT+54*(RADIUS+1),MARGIN_TOP,parseInt(minutes%10),cxt);
+	renderDigit(MARGIN_LEFT+69*(RADIUS+1),MARGIN_TOP,10,cxt);
+	renderDigit(MARGIN_LEFT+78*(RADIUS+1),MARGIN_TOP,parseInt(seconds/10),cxt);
+	renderDigit(MARGIN_LEFT+93*(RADIUS+1),MARGIN_TOP,parseInt(seconds%10),cxt);
+	
+	//彩球绘制
+	for(var i= 0;i<balls.length;i++){
+		cxt.fillStyle=balls[i].color;
+		
+		cxt.beginPath();
+		cxt.arc(balls[i].x,balls[i].y,RADIUS,0,2*Math.PI,true)
+		cxt.closePath();
+		cxt.fill()
+	}
+	
+}
+function renderDigit(x,y,num,cxt){
+	cxt.fillStyle = "rgb(0,102,153)";
+	
+	for(var i=0;i<digit[num].length;i++){
+		for(var j= 0;j<digit[num][i].length;j++){
+			if(digit[num][i][j]==1){
+				cxt.beginPath();
+				//圆心位置：
+				//CenterX: x+j*2*(R+1)+(R+1)
+				//CenterY: y+i*2*(R+1)+(R+1)
+				//R:圆的半径
+				//R+1:使圆之间有空隙，即，每个圆在一个边长为R+1的正方形内
+				//x : 每个数字开始的x轴位置
+				//y : 每个数字开始的y轴位置
+				cxt.arc(x+j*2*(RADIUS+1)+(RADIUS+1),y+i*2*(RADIUS+1)+(RADIUS+1),RADIUS,0,2*Math.PI)
+				cxt.closePath();
+				
+				cxt.fill();
+//				console.log(num)
+			}
+		}
+	}
+}
+
+function getCurrentShowTimeSeconds(){
+	var curTime = new Date();
+	var ret = endTime.getTime()-curTime.getTime();
+	ret = Math.round(ret/1000);
+	return ret>=0? ret : 0;
+}

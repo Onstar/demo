@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		用户名: <input type="text" />
+		密码: <input type="password" />
+		<input type="button" value="登入" />
+		<input type="button" value="注册" />
+		<!--记住密码:<input type="checkbox" value="" />-->
+		<input type="button" value="清除缓存" id="cle"/>
+		
+	</body>
+	<script>
+		var login = document.querySelectorAll("input[type='button']")[0];
+		var sign = document.querySelectorAll("input[type='button']")[1];
+		var user = document.querySelector("input[type='text']");
+		var pwd = document.querySelector("input[type='password']");
+		var cle = document.getElementById("cle")
+		var n=0;
+		login.addEventListener("click",function(){
+			var lock = 0;
+			for(var i=0;i<i+1;i++){
+				var name = localStorage.getItem("user"+i);
+				var pd = localStorage.getItem("pwd"+i);
+				if(user.value==name&&pwd.value==pd){
+//					alert("登入成功");
+					lock = 1;
+					break;
+					console.log(111)
+				}else if(user.value==name&&pwd.value!=pd){
+//					alert("密码错误")
+					lock = 2;
+				}else if(name==null){
+					break;
+				}else if(user.value!=name){
+//					alert("用户名不存在");
+					lock =3;
+				}
+			}
+			switch(lock){
+				case 1:
+				alert("登入成功");
+				break;
+				case 2:
+				alert("密码错误");
+				break;
+				case 3:
+				alert("用户名不存在");
+				break;
+			}
+		})
+		sign.addEventListener("click",function(){
+			for(var i=0;i<i+1;i++){
+				var name = localStorage.getItem("user"+i);
+				var pd = localStorage.getItem("pwd"+i);
+				if(user.value!=name&&user.value!=""&&pwd.value!=""){
+					if(name==null){
+						localStorage.setItem("user"+i,user.value);
+						localStorage.setItem("pwd"+i,pwd.value);
+						break;
+					}
+				}else if(user.value==name){
+					alert("用户名已注册");
+					break;
+				}else if(name==null){
+					break;
+				}
+			}
+		})
+		
+		cle.addEventListener("click",function(){
+			localStorage.clear()
+		})
+	</script>
+</html>

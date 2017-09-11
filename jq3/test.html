@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.box{
+				width: 800px;
+				height: 50px;
+				border: 1px solid #AAAAAA;
+				position: relative;
+				margin: 100px auto 0;
+			}
+			.slider{
+				width: 100px;
+				height: 50px;
+				background-color: darkgreen;
+				position: absolute;
+				left: 0;
+				top: 0;
+				cursor: pointer;
+				z-index: 10;
+			}
+			.sp{
+				width: 100%;
+				position: absolute;
+				text-align: center;
+				line-height: 50px;
+				font-size: 18px;
+				z-index: 5;
+				display: none;
+			}
+		</style>
+		<script src="js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(function(){
+				
+				var box = $('#box');
+				var slider = $('#slider');
+				var sp = $('#sp');
+				
+				//首先鼠标按下事件，只有鼠标按下后才能移动滑块
+				slider.on('mousedown',function(event){
+					//ex:鼠标点击位置与浏览器窗口左边的距离
+					var ex = event.clientX;
+					//sx:滑块与浏览器窗口左边的距离
+					var sx = $(this).offset().left;
+					//dx:鼠标点击位置与滑块左边的距离
+					var dx = ex-sx;
+					
+					slider.on('mousemove',function(e){
+						//阻止事件冒泡，
+						e.stopPropagation()
+						//根据鼠标的移动改变滑块的left值
+						$(this).css('left',e.clientX-ex);
+						//如果滑块移动到最左边了，就不能往左移动了
+						if ($(this).position().left<=0) {
+							$(this).css('left',0)
+						}
+						//如果滑块移动到最右边，也不能继续往右边移动了
+						if ($(this).position().left>=700) {
+							$(this).css('left',700)
+						}
+					})
+				})
+				
+				
+				//给滑块一个鼠标弹起事件
+				slider.on('mouseup',function(){
+					//当鼠标弹起的时候，把滑块的移动事件去掉
+					slider.off('mousemove')
+					
+					//根据滑块当前的位置判断滑块是回到初始位置还是隐藏
+					if ($(this).position().left >= 700) {
+						$(this).css('display','none');
+						sp.css('display','block')
+					}else{
+						$(this).css('left',0)
+					}
+				})
+				
+				//给document一个mousemove事件，只要鼠标移动到document上面，是直接执行滑块的鼠标弹起事件
+				$(document).on('mousemove',function(){
+					slider.mouseup()
+				})
+				
+				
+				
+			})
+		</script>
+	</head>
+	<body>
+		<div class="box" id="box">
+			<div class="slider" id="slider"></div>
+			<span class="sp" id="sp">解锁成功</span>
+		</div>
+	</body>
+</html>
