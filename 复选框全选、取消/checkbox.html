@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>复选框全选、取消效果</title>
+	</head>
+	<body>
+		<input type="checkbox" />全选
+		<hr>
+		<input type="checkbox" />手机<br />
+		<input type="checkbox" />电脑<br />
+		<input type="checkbox" />数码<br />
+	</body>
+	
+	<script>
+		var inpT =document.querySelectorAll("input:first-child")[0];
+		var inpB = document.querySelectorAll("input:not(:first-child)")
+		inpT.addEventListener("click",function(){
+				for(var i=0;i<inpB.length;i++){
+					inpB[i].checked=inpT.checked;	//让下面的所有选项和全选框的状态保持一致。
+				}
+		})
+		
+		for(var i=0;i<inpB.length;i++){
+			inpB[i].addEventListener("click",function(){
+				for(var j=0;j<inpB.length;j++){
+					if(!inpB[j].checked){
+						inpT.checked=inpB[j].checked;	//如果下面有没有选到的，则让全选框也不选中，并且跳出循环。
+						break;
+					}else{
+						inpT.checked=inpB[j].checked;	//下面的选框全部被选中，则全选框也选中。
+					}
+				}
+			})
+		}
+		
+		
+	</script>
+</html>
